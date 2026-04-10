@@ -8,6 +8,7 @@ import { CalendarDays, Users, Clock, Zap, ArrowRight, Copy } from "lucide-react"
 import Link from "next/link";
 import { formatDuration } from "@/lib/utils";
 import type { Metadata } from "next";
+import type { Service } from "@/types";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -117,7 +118,7 @@ export default async function DashboardPage() {
           </Card>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {user.services.map((service) => (
+            {(user.services as Service[]).map((service) => (
               <Card key={service.id}>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between">
