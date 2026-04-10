@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Scissors, Clock, Users, Zap } from "lucide-react";
 import { formatDuration, getInitials } from "@/lib/utils";
 import type { Metadata } from "next";
+import type { Service } from "@/types";
 
 export async function generateMetadata({ params }: { params: Promise<{ username: string }> }): Promise<Metadata> {
   const { username } = await params;
@@ -74,7 +75,7 @@ export default async function BarberPublicPage({ params }: { params: Promise<{ u
           <div>
             <h2 className="font-semibold text-zinc-900 mb-3">Book an appointment</h2>
             <div className="space-y-2">
-              {barber.services.map((service) => (
+              {(barber.services as Service[]).map((service) => (
                 <Link key={service.id} href={`/${username}/${service.slug}`}>
                   <Card className="hover:border-zinc-400 transition-colors cursor-pointer">
                     <CardContent className="p-4 flex items-center gap-4">
