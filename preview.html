@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ChairTime — Preview</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --zinc-50: #fafafa; --zinc-100: #f4f4f5; --zinc-200: #e4e4e7;
+    --zinc-300: #d4d4d8; --zinc-400: #a1a1aa; --zinc-500: #71717a;
+    --zinc-600: #52525b; --zinc-700: #3f3f46; --zinc-800: #27272a;
+    --zinc-900: #18181b; --white: #ffffff;
+    --red-500: #ef4444; --green-600: #16a34a; --green-100: #dcfce7;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--zinc-50); color: var(--zinc-900); font-size: 14px; line-height: 1.5; }
+
+  /* ── Utilities ── */
+  .hidden { display: none !important; }
+  .flex { display: flex; } .grid { display: grid; } .block { display: block; }
+  .items-center { align-items: center; } .items-start { align-items: flex-start; }
+  .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
+  .gap-1 { gap: 4px; } .gap-2 { gap: 8px; } .gap-3 { gap: 12px; } .gap-4 { gap: 16px; } .gap-6 { gap: 24px; }
+  .space-y-2 > * + * { margin-top: 8px; } .space-y-3 > * + * { margin-top: 12px; }
+  .space-y-4 > * + * { margin-top: 16px; } .space-y-6 > * + * { margin-top: 24px; }
+  .space-y-8 > * + * { margin-top: 32px; }
+  .flex-1 { flex: 1; } .shrink-0 { flex-shrink: 0; } .min-w-0 { min-width: 0; }
+  .w-full { width: 100%; } .text-center { text-align: center; } .text-right { text-align: right; }
+  .font-bold { font-weight: 700; } .font-semibold { font-weight: 600; } .font-medium { font-weight: 500; }
+  .text-sm { font-size: 13px; } .text-xs { font-size: 11px; } .text-lg { font-size: 16px; }
+  .text-xl { font-size: 18px; } .text-2xl { font-size: 22px; } .text-3xl { font-size: 28px; }
+  .text-4xl { font-size: 36px; } .text-5xl { font-size: 48px; }
+  .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .relative { position: relative; } .absolute { position: absolute; }
+  .leading-tight { line-height: 1.25; } .leading-relaxed { line-height: 1.625; }
+
+  /* ── Colors ── */
+  .text-zinc-400 { color: var(--zinc-400); } .text-zinc-500 { color: var(--zinc-500); }
+  .text-zinc-600 { color: var(--zinc-600); } .text-zinc-900 { color: var(--zinc-900); }
+  .text-white { color: #fff; } .text-red-500 { color: var(--red-500); }
+  .text-green-600 { color: var(--green-600); }
+  .bg-white { background: #fff; } .bg-zinc-50 { background: var(--zinc-50); }
+  .bg-zinc-100 { background: var(--zinc-100); } .bg-zinc-900 { background: var(--zinc-900); }
+  .bg-green-100 { background: var(--green-100); }
+  .border { border: 1px solid var(--zinc-200); }
+  .border-zinc-200 { border-color: var(--zinc-200); }
+  .border-dashed { border-style: dashed; }
+  .rounded { border-radius: 6px; } .rounded-md { border-radius: 6px; }
+  .rounded-lg { border-radius: 8px; } .rounded-xl { border-radius: 12px; }
+  .rounded-full { border-radius: 9999px; }
+  .shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+  .shadow-lg { box-shadow: 0 10px 25px rgba(0,0,0,.1); }
+  .overflow-hidden { overflow: hidden; }
+  .cursor-pointer { cursor: pointer; }
+  .transition { transition: all .15s; }
+  .opacity-50 { opacity: .5; }
+  .max-w-sm { max-width: 380px; } .max-w-2xl { max-width: 672px; }
+  .max-w-4xl { max-width: 896px; } .max-w-5xl { max-width: 1024px; }
+  .max-w-6xl { max-width: 1152px; }
+  .mx-auto { margin-left: auto; margin-right: auto; }
+
+  /* ── Card ── */
+  .card { background: #fff; border: 1px solid var(--zinc-200); border-radius: 10px; }
+  .card-content { padding: 20px; }
+  .card-header { padding: 20px 20px 0; }
+  .card-title { font-size: 14px; font-weight: 600; }
+
+  /* ── Button ── */
+  button, .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px;
+    border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;
+    border: none; transition: all .15s; text-decoration: none; }
+  .btn-primary { background: var(--zinc-900); color: #fff; }
+  .btn-primary:hover { background: var(--zinc-700); }
+  .btn-outline { background: #fff; color: var(--zinc-900); border: 1px solid var(--zinc-200); }
+  .btn-outline:hover { background: var(--zinc-50); }
+  .btn-ghost { background: transparent; color: var(--zinc-600); }
+  .btn-ghost:hover { background: var(--zinc-100); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-lg { padding: 11px 24px; font-size: 15px; }
+  .btn-icon { padding: 7px; }
+  .btn-red { background: #fef2f2; color: var(--red-500); }
+  .btn-red:hover { background: #fee2e2; }
+  .btn-danger { background: var(--red-500); color: #fff; }
+  .btn-danger:hover { background: #dc2626; }
+  .btn-w-full { width: 100%; justify-content: center; }
+
+  /* ── Input / Label ── */
+  .input { width: 100%; padding: 7px 12px; border: 1px solid var(--zinc-200); border-radius: 6px;
+    font-size: 13px; outline: none; background: #fff; color: var(--zinc-900); }
+  .input:focus { border-color: var(--zinc-400); box-shadow: 0 0 0 3px rgba(24,24,27,.08); }
+  .input::placeholder { color: var(--zinc-400); }
+  label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; color: var(--zinc-700); }
+  select { width: 100%; padding: 7px 12px; border: 1px solid var(--zinc-200); border-radius: 6px;
+    font-size: 13px; background: #fff; color: var(--zinc-900); outline: none; }
+
+  /* ── Badge ── */
+  .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 99px;
+    font-size: 11px; font-weight: 600; }
+  .badge-secondary { background: var(--zinc-100); color: var(--zinc-700); }
+  .badge-success { background: #dcfce7; color: #15803d; }
+  .badge-destructive { background: #fef2f2; color: #dc2626; }
+  .badge-outline { background: transparent; color: var(--zinc-500); border: 1px solid var(--zinc-200); }
+  .badge-dark { background: var(--zinc-900); color: #fff; }
+
+  /* ── Toggle ── */
+  .toggle { position: relative; display: inline-block; width: 36px; height: 20px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; inset: 0; background: var(--zinc-200); border-radius: 20px; cursor: pointer; transition: .2s; }
+  .toggle-slider::before { content: ''; position: absolute; height: 14px; width: 14px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .2s; }
+  .toggle input:checked + .toggle-slider { background: var(--zinc-900); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(16px); }
+
+  /* ── Color swatch ── */
+  .color-swatch { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: .15s; }
+  .color-swatch.active { border-color: var(--zinc-900); box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--zinc-900); }
+
+  /* ── Layout ── */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* ── LANDING ── */
+  .landing-nav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.85); backdrop-filter: blur(8px); border-bottom: 1px solid var(--zinc-200); }
+  .landing-nav-inner { max-width: 1152px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: flex; align-items: center; gap: 8px; }
+  .logo-icon { width: 32px; height: 32px; background: var(--zinc-900); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .hero { padding: 80px 24px 64px; text-align: center; max-width: 800px; margin: 0 auto; }
+  .hero h1 { font-size: clamp(36px,6vw,60px); font-weight: 700; line-height: 1.1; letter-spacing: -.02em; margin: 16px 0 20px; }
+  .hero p { font-size: 18px; color: var(--zinc-500); max-width: 540px; margin: 0 auto 36px; }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .features-section { background: var(--zinc-50); padding: 72px 24px; }
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+  .feature-card { background: #fff; border: 1px solid var(--zinc-200); border-radius: 10px; padding: 24px; }
+  .feature-icon { width: 40px; height: 40px; background: var(--zinc-900); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 900px; margin: 0 auto; }
+  .pricing-card { background: #fff; border: 1px solid var(--zinc-200); border-radius: 10px; padding: 28px; position: relative; }
+  .pricing-card.highlighted { border-color: var(--zinc-900); box-shadow: 0 8px 24px rgba(0,0,0,.1); }
+  .most-popular { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--zinc-900); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 99px; white-space: nowrap; }
+  .price-amount { font-size: 40px; font-weight: 700; line-height: 1; }
+  .check-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--zinc-600); }
+  .check-icon { color: var(--zinc-900); font-size: 14px; }
+  .section-heading { text-align: center; margin-bottom: 48px; }
+  .section-heading h2 { font-size: 30px; font-weight: 700; margin-bottom: 8px; }
+  footer { border-top: 1px solid var(--zinc-200); padding: 32px 24px; text-align: center; }
+
+  /* ── AUTH ── */
+  .auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--zinc-50); padding: 24px; }
+  .auth-card { background: #fff; border: 1px solid var(--zinc-200); border-radius: 12px; padding: 36px; width: 100%; max-width: 400px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+  .auth-footer { margin-top: 16px; text-align: center; font-size: 13px; color: var(--zinc-500); }
+  .auth-footer a { color: var(--zinc-900); text-decoration: none; font-weight: 500; }
+
+  /* ── ONBOARDING ── */
+  .step-dot { width: 28px; height: 28px; border-radius: 50%; background: var(--zinc-900); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+  .step-dot.inactive { background: var(--zinc-100); color: var(--zinc-400); }
+  .step-line { height: 1px; width: 48px; background: var(--zinc-200); }
+  .step-line.done { background: var(--zinc-900); }
+  .type-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px; border-radius: 12px; border: 2px solid var(--zinc-200); cursor: pointer; transition: .15s; background: #fff; }
+  .type-btn.active { border-color: var(--zinc-900); background: var(--zinc-50); }
+  .type-btn:hover:not(.active) { border-color: var(--zinc-300); }
+
+  /* ── DASHBOARD SHELL ── */
+  .dash-shell { display: flex; min-height: 100vh; }
+  .sidebar { width: 240px; min-height: 100vh; background: #fff; border-right: 1px solid var(--zinc-200); display: flex; flex-direction: column; padding: 20px 12px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .sidebar-logo { display: flex; align-items: center; gap: 8px; padding: 4px 8px 20px; }
+  .sidebar-logo-icon { width: 30px; height: 30px; background: var(--zinc-900); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--zinc-600); cursor: pointer; transition: .1s; text-decoration: none; }
+  .nav-item:hover { background: var(--zinc-50); color: var(--zinc-900); }
+  .nav-item.active { background: var(--zinc-100); color: var(--zinc-900); }
+  .nav-icon { width: 16px; text-align: center; }
+  .sidebar-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--zinc-100); }
+  .user-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--zinc-900); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+  .dash-main { flex: 1; padding: 32px; background: var(--zinc-50); overflow-y: auto; }
+  .dash-view { display: none; }
+  .dash-view.active { display: block; }
+
+  /* ── STAT CARDS ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+  .stat-card { background: #fff; border: 1px solid var(--zinc-200); border-radius: 10px; padding: 20px; }
+  .stat-label { font-size: 11px; color: var(--zinc-500); margin-bottom: 6px; }
+  .stat-value { font-size: 28px; font-weight: 700; }
+  .stat-icon { color: var(--zinc-400); }
+
+  /* ── QUEUE VIEW ── */
+  .queue-entry { background: #fff; border: 1px solid var(--zinc-200); border-radius: 10px; padding: 16px; display: flex; align-items: center; gap: 12px; }
+  .queue-num { width: 36px; height: 36px; border-radius: 50%; background: var(--zinc-900); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; }
+  .queue-num.called { background: #dcfce7; color: #15803d; }
+
+  /* ── PUBLIC BOOKING ── */
+  .public-wrap { max-width: 640px; margin: 0 auto; padding: 32px 20px; }
+  .time-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; }
+  .time-btn { padding: 8px; border: 1px solid var(--zinc-200); border-radius: 6px; text-align: center; font-size: 13px; cursor: pointer; background: #fff; transition: .1s; }
+  .time-btn:hover { border-color: var(--zinc-400); }
+  .time-btn.selected { background: var(--zinc-900); color: #fff; border-color: var(--zinc-900); }
+  .day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .day-btn { padding: 8px 4px; border-radius: 6px; text-align: center; font-size: 12px; cursor: pointer; border: 1px solid var(--zinc-200); background: #fff; transition: .1s; }
+  .day-btn:hover:not(.disabled) { border-color: var(--zinc-400); }
+  .day-btn.selected { background: var(--zinc-900); color: #fff; border-color: var(--zinc-900); }
+  .day-btn.disabled { opacity: .4; cursor: not-allowed; background: var(--zinc-50); }
+  .step-indicator { display: flex; gap: 6px; margin-bottom: 24px; }
+  .step-pip { height: 3px; border-radius: 99px; flex: 1; background: var(--zinc-200); }
+  .step-pip.done { background: var(--zinc-900); }
+  .service-choice { border: 1px solid var(--zinc-200); border-radius: 8px; padding: 14px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; background: #fff; transition: .1s; }
+  .service-choice:hover { border-color: var(--zinc-400); }
+  .service-choice.selected { border-color: var(--zinc-900); background: var(--zinc-50); }
+
+  /* ── AVAILABILITY ── */
+  .day-row { background: #fff; border: 1px solid var(--zinc-200); border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 16px; }
+  .day-name { width: 100px; font-weight: 500; }
+  .time-range { display: flex; align-items: center; gap: 8px; }
+
+  /* ── CLIENTS ── */
+  .client-row { background: #fff; border: 1px solid var(--zinc-200); border-radius: 8px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+
+  /* ── SETTINGS TABS ── */
+  .tab-bar { display: flex; gap: 2px; background: var(--zinc-100); border-radius: 8px; padding: 3px; width: fit-content; }
+  .tab-btn { padding: 5px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--zinc-500); background: none; border: none; transition: .1s; }
+  .tab-btn.active { background: #fff; color: var(--zinc-900); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+
+  /* ── BREADCRUMB NAV for mobile preview ── */
+  .preview-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid var(--zinc-200); padding: 6px 0; display: flex; overflow-x: auto; z-index: 100; }
+  @media (min-width: 640px) { .preview-nav { display: none; } }
+
+  /* ── SVG Icons ── */
+  svg { display: inline-block; vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     LANDING PAGE
+══════════════════════════════════════════ -->
+<div id="page-landing" class="page active">
+  <nav class="landing-nav">
+    <div class="landing-nav-inner">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm2.12-8.485a3 3 0 10-4.242-4.242 3 3 0 004.242 4.242z"/></svg>
+        </div>
+        <span style="font-weight:700;font-size:17px;">ChairTime</span>
+      </div>
+      <nav style="display:flex;gap:24px;font-size:13px;color:var(--zinc-600);">
+        <a href="#features" style="text-decoration:none;color:inherit;">Features</a>
+        <a href="#pricing" style="text-decoration:none;color:inherit;">Pricing</a>
+      </nav>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="showPage('login')">Log in</button>
+        <button class="btn btn-primary btn-sm" onclick="showPage('signup')">Get started free</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <span class="badge badge-secondary">Built for barbers, by barbers</span>
+    <h1>Booking software your<br>clients will actually use</h1>
+    <p>Appointments, walk-in queues, and open pool scheduling — all in one place. Built for individual barbers and entire barbershops.</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary btn-lg" onclick="showPage('signup')">Start free — no credit card →</button>
+      <button class="btn btn-outline btn-lg" onclick="showPage('public-booking')">See a live demo</button>
+    </div>
+    <p style="margin-top:12px;font-size:12px;color:var(--zinc-400);">14-day free trial on all plans</p>
+  </div>
+
+  <!-- Features -->
+  <div id="features" class="features-section">
+    <div class="section-heading">
+      <h2>Three ways clients can book you</h2>
+      <p style="color:var(--zinc-500);font-size:16px;">Not every client books the same way. ChairTime handles all of them.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <h3 style="font-weight:600;margin-bottom:6px;">Appointment Booking</h3>
+        <p style="font-size:13px;color:var(--zinc-500);line-height:1.6;">Clients pick their barber, select a service, and book a specific time slot. Fully automated confirmations and reminders.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <h3 style="font-weight:600;margin-bottom:6px;">Walk-in Queue</h3>
+        <p style="font-size:13px;color:var(--zinc-500);line-height:1.6;">Clients check in via QR code and see their real-time position and estimated wait. Barbers manage the queue from the dashboard.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <h3 style="font-weight:600;margin-bottom:6px;">Open Pool Scheduling</h3>
+        <p style="font-size:13px;color:var(--zinc-500);line-height:1.6;">Barbers post open time blocks to the shop pool. Clients pick a time — the system auto-assigns the best available barber.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <h3 style="font-weight:600;margin-bottom:6px;">Team Management</h3>
+        <p style="font-size:13px;color:var(--zinc-500);line-height:1.6;">Shop owners invite barbers, manage schedules, and see all bookings in one place. Each barber gets their own public page.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <h3 style="font-weight:600;margin-bottom:6px;">Client CRM</h3>
+        <p style="font-size:13px;color:var(--zinc-500);line-height:1.6;">Every client who books automatically gets added to your contacts. See booking history, contact info, and lifetime visits.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm2.12-8.485a3 3 0 10-4.242-4.242 3 3 0 004.242 4.242z"/></svg></div>
+        <h3 style="font-weight:600;margin-bottom:6px;">Service Catalog</h3>
+        <p style="font-size:13px;color:var(--zinc-500);line-height:1.6;">Create services with custom durations, prices, and buffer times. Show exactly what you offer on your public booking page.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div id="pricing" style="padding:72px 24px;">
+    <div class="section-heading">
+      <h2>Simple, honest pricing</h2>
+      <p style="color:var(--zinc-500);font-size:16px;">14-day free trial on every plan. Cancel anytime.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <h3 style="font-size:20px;font-weight:700;margin-bottom:4px;">Solo</h3>
+        <p style="color:var(--zinc-500);font-size:13px;margin-bottom:16px;">Perfect for independent barbers</p>
+        <div style="margin-bottom:20px;"><span class="price-amount">$19</span><span style="color:var(--zinc-500);">/mo</span></div>
+        <div class="space-y-3" style="margin-bottom:24px;">
+          <div class="check-item"><span class="check-icon">✓</span> 1 barber</div>
+          <div class="check-item"><span class="check-icon">✓</span> Appointment booking</div>
+          <div class="check-item"><span class="check-icon">✓</span> Walk-in queue</div>
+          <div class="check-item"><span class="check-icon">✓</span> Open pool booking</div>
+          <div class="check-item"><span class="check-icon">✓</span> Client CRM</div>
+          <div class="check-item"><span class="check-icon">✓</span> Email notifications</div>
+        </div>
+        <button class="btn btn-outline btn-w-full" onclick="showPage('signup')">Start Free Trial</button>
+      </div>
+      <div class="pricing-card highlighted">
+        <span class="most-popular">Most popular</span>
+        <h3 style="font-size:20px;font-weight:700;margin-bottom:4px;">Shop</h3>
+        <p style="color:var(--zinc-500);font-size:13px;margin-bottom:16px;">For barbershops with a team</p>
+        <div style="margin-bottom:20px;"><span class="price-amount">$49</span><span style="color:var(--zinc-500);">/mo</span></div>
+        <div class="space-y-3" style="margin-bottom:24px;">
+          <div class="check-item"><span class="check-icon">✓</span> Up to 10 barbers</div>
+          <div class="check-item"><span class="check-icon">✓</span> Everything in Solo</div>
+          <div class="check-item"><span class="check-icon">✓</span> Shop public page</div>
+          <div class="check-item"><span class="check-icon">✓</span> Team management</div>
+          <div class="check-item"><span class="check-icon">✓</span> Shop-wide queue</div>
+          <div class="check-item"><span class="check-icon">✓</span> Priority support</div>
+        </div>
+        <button class="btn btn-primary btn-w-full" onclick="showPage('signup')">Start Free Trial</button>
+      </div>
+      <div class="pricing-card">
+        <h3 style="font-size:20px;font-weight:700;margin-bottom:4px;">Pro Shop</h3>
+        <p style="color:var(--zinc-500);font-size:13px;margin-bottom:16px;">For large or multi-location shops</p>
+        <div style="margin-bottom:20px;"><span class="price-amount">$99</span><span style="color:var(--zinc-500);">/mo</span></div>
+        <div class="space-y-3" style="margin-bottom:24px;">
+          <div class="check-item"><span class="check-icon">✓</span> Unlimited barbers</div>
+          <div class="check-item"><span class="check-icon">✓</span> Everything in Shop</div>
+          <div class="check-item"><span class="check-icon">✓</span> Advanced analytics</div>
+          <div class="check-item"><span class="check-icon">✓</span> Custom branding</div>
+          <div class="check-item"><span class="check-icon">✓</span> API access</div>
+          <div class="check-item"><span class="check-icon">✓</span> Dedicated support</div>
+        </div>
+        <button class="btn btn-outline btn-w-full" onclick="showPage('signup')">Start Free Trial</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;">
+      <div class="logo-icon" style="width:26px;height:26px;"><svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm2.12-8.485a3 3 0 10-4.242-4.242 3 3 0 004.242 4.242z"/></svg></div>
+      <span style="font-weight:600;">ChairTime</span>
+    </div>
+    <p style="font-size:12px;color:var(--zinc-400);">© 2026 ChairTime. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════════
+     LOGIN
+══════════════════════════════════════════ -->
+<div id="page-login" class="page">
+  <div class="auth-wrap">
+    <div style="width:100%;max-width:400px;">
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:24px;">
+          <div class="logo-icon" style="width:36px;height:36px;"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm2.12-8.485a3 3 0 10-4.242-4.242 3 3 0 004.242 4.242z"/></svg></div>
+          <span style="font-weight:700;font-size:18px;">ChairTime</span>
+        </div>
+      </div>
+      <div class="auth-card">
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:4px;">Welcome back</h2>
+        <p style="color:var(--zinc-500);font-size:13px;margin-bottom:24px;">Sign in to your account</p>
+        <div class="space-y-4">
+          <div><label>Email</label><input class="input" type="email" placeholder="you@example.com" value="marcus@fadehouse.com" /></div>
+          <div><label>Password</label><input class="input" type="password" value="••••••••" /></div>
+          <button class="btn btn-primary btn-w-full" style="margin-top:4px;" onclick="showPage('dashboard')">Sign in</button>
+        </div>
+      </div>
+      <div class="auth-footer">Don't have an account? <a href="#" onclick="showPage('signup')">Sign up free</a></div>
+      <div class="auth-footer" style="margin-top:8px;"><a href="#" onclick="showPage('landing')">← Back to home</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SIGNUP
+══════════════════════════════════════════ -->
+<div id="page-signup" class="page">
+  <div class="auth-wrap">
+    <div style="width:100%;max-width:400px;">
+      <div style="text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:28px;">
+        <div class="logo-icon" style="width:36px;height:36px;"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm2.12-8.485a3 3 0 10-4.242-4.242 3 3 0 004.242 4.242z"/></svg></div>
+        <span style="font-weight:700;font-size:18px;">ChairTime</span>
+      </div>
+      <div class="auth-card">
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:4px;">Create your account</h2>
+        <p style="color:var(--zinc-500);font-size:13px;margin-bottom:24px;">14-day free trial, no credit card required</p>
+        <div class="space-y-4">
+          <div><label>Full name</label><input class="input" type="text" placeholder="Marcus Johnson" /></div>
+          <div><label>Email</label><input class="input" type="email" placeholder="you@example.com" /></div>
+          <div><label>Password</label><input class="input" type="password" placeholder="At least 8 characters" /></div>
+          <button class="btn btn-primary btn-w-full" style="margin-top:4px;" onclick="showPage('onboarding')">Create account</button>
+        </div>
+      </div>
+      <div class="auth-footer">Already have an account? <a href="#" onclick="showPage('login')">Sign in</a></div>
+      <div class="auth-footer" style="margin-top:8px;"><a href="#" onclick="showPage('landing')">← Back to home</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ONBOARDING
+══════════════════════════════════════════ -->
+<div id="page-onboarding" class="page">
+  <div class="auth-wrap">
+    <div style="width:100%;max-width:480px;">
+      <div style="text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:28px;">
+        <div class="logo-icon" style="width:36px;height:36px;"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm2.12-8.485a3 3 0 10-4.242-4.242 3 3 0 004.242 4.242z"/></svg></div>
+        <span style="font-weight:700;font-size:18px;">ChairTime</span>
+      </div>
+      <div class="auth-card" style="max-width:480px;">
+        <!-- Step indicators -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;" id="onboard-steps">
+          <div class="step-dot" id="step-1">1</div>
+          <div class="step-line done" id="step-line-1"></div>
+          <div class="step-dot inactive" id="step-2">2</div>
+        </div>
+        <!-- Step 1 -->
+        <div id="onboard-step1">
+          <h2 style="font-size:19px;font-weight:700;margin-bottom:4px;">Set up your profile</h2>
+          <p style="color:var(--zinc-500);font-size:13px;margin-bottom:20px;">This is how clients will find you.</p>
+          <div class="space-y-4">
+            <div>
+              <label>Username</label>
+              <div style="display:flex;">
+                <span style="height:36px;padding:0 12px;display:flex;align-items:center;font-size:13px;color:var(--zinc-500);border:1px solid var(--zinc-200);border-right:none;border-radius:6px 0 0 6px;background:var(--zinc-50);">chairtime.app/</span>
+                <input class="input" style="border-radius:0 6px 6px 0;" placeholder="yourname" value="marcus" />
+              </div>
+              <p style="font-size:11px;color:var(--green-600);margin-top:3px;">✓ Available</p>
+            </div>
+            <div>
+              <label>Timezone</label>
+              <select><option>America/New_York</option><option>America/Chicago</option><option>America/Los_Angeles</option></select>
+            </div>
+            <button class="btn btn-primary btn-w-full" onclick="onboardStep2()">Continue</button>
+          </div>
+        </div>
+        <!-- Step 2 -->
+        <div id="onboard-step2" style="display:none;">
+          <h2 style="font-size:19px;font-weight:700;margin-bottom:4px;">Choose your account type</h2>
+          <p style="color:var(--zinc-500);font-size:13px;margin-bottom:20px;">You can always upgrade later.</p>
+          <div style="display:flex;gap:12px;margin-bottom:20px;">
+            <button class="type-btn active" id="type-solo" onclick="selectType('solo')">
+              <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.582-7 8-7s8 3 8 7"/></svg>
+              <div><p style="font-weight:600;font-size:13px;">Solo Barber</p><p style="font-size:11px;color:var(--zinc-500);">Just me</p></div>
+            </button>
+            <button class="type-btn" id="type-shop" onclick="selectType('shop')">
+              <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+              <div><p style="font-weight:600;font-size:13px;">Barbershop</p><p style="font-size:11px;color:var(--zinc-500);">Team of barbers</p></div>
+            </button>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn btn-outline" style="flex:1;" onclick="onboardStep1()">Back</button>
+            <button class="btn btn-primary" style="flex:1;" onclick="showPage('dashboard')">Finish setup</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     DASHBOARD
+══════════════════════════════════════════ -->
+<div id="page-dashboard" class="page">
+  <div class="dash-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm2.12-8.485a3 3 0 10-4.242-4.242 3 3 0 004.242 4.242z"/></svg></div>
+        <span style="font-weight:700;font-size:15px;">ChairTime</span>
+      </div>
+      <div class="space-y-1">
+        <a class="nav-item active" id="nav-overview" onclick="showDash('overview')">
+          <span class="nav-icon">⊞</span> Overview
+        </a>
+        <a class="nav-item" id="nav-bookings" onclick="showDash('bookings')">
+          <span class="nav-icon">📅</span> Bookings
+        </a>
+        <a class="nav-item" id="nav-queue" onclick="showDash('queue')">
+          <span class="nav-icon">🪑</span> Walk-in Queue
+        </a>
+        <a class="nav-item" id="nav-pool" onclick="showDash('pool')">
+          <span class="nav-icon">⚡</span> Open Pool
+        </a>
+        <a class="nav-item" id="nav-services" onclick="showDash('services')">
+          <span class="nav-icon">✂️</span> Services
+        </a>
+        <a class="nav-item" id="nav-availability" onclick="showDash('availability')">
+          <span class="nav-icon">🕐</span> Availability
+        </a>
+        <a class="nav-item" id="nav-clients" onclick="showDash('clients')">
+          <span class="nav-icon">👥</span> Clients
+        </a>
+        <a class="nav-item" id="nav-shop" onclick="showDash('shop')">
+          <span class="nav-icon">🏪</span> Shop
+        </a>
+        <a class="nav-item" id="nav-settings" onclick="showDash('settings')">
+          <span class="nav-icon">⚙️</span> Settings
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-row">
+          <div class="avatar">MJ</div>
+          <div style="min-width:0;">
+            <p style="font-size:12px;font-weight:600;truncate">Marcus Johnson</p>
+            <p style="font-size:11px;color:var(--zinc-500);">Solo plan</p>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm btn-w-full" style="margin-top:4px;" onclick="showPage('landing')">Sign out</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="dash-main">
+
+      <!-- OVERVIEW -->
+      <div class="dash-view active" id="dash-overview">
+        <div class="flex items-start justify-between" style="margin-bottom:28px;">
+          <div>
+            <h1 style="font-size:22px;font-weight:700;">Good afternoon, Marcus</h1>
+            <p style="color:var(--zinc-500);font-size:13px;margin-top:2px;">Here's what's happening today.</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;background:var(--zinc-50);border:1px solid var(--zinc-200);border-radius:8px;padding:8px 12px;">
+            <span style="color:var(--zinc-500);">chairtime.app/marcus</span>
+            <button style="background:none;border:none;cursor:pointer;color:var(--zinc-400);">📋</button>
+          </div>
+        </div>
+
+        <div class="stats-grid" style="margin-bottom:28px;">
+          <div class="stat-card">
+            <p class="stat-label">Today's appointments</p>
+            <p class="stat-value">4</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-label">Upcoming total</p>
+            <p class="stat-value">12</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-label">In queue now</p>
+            <p class="stat-value">3</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-label">Total clients</p>
+            <p class="stat-value">87</p>
+          </div>
+        </div>
+
+        <div style="margin-bottom:28px;">
+          <div class="flex items-center justify-between" style="margin-bottom:14px;">
+            <h2 style="font-weight:600;">Active services</h2>
+            <button class="btn btn-ghost btn-sm" onclick="showDash('services')">Manage →</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">
+            <div class="card"><div class="card-content" style="padding:14px;display:flex;align-items:center;gap:10px;"><div style="width:10px;height:36px;border-radius:4px;background:#3b82f6;flex-shrink:0;"></div><div><p style="font-weight:500;font-size:13px;">Fade & Line Up</p><p style="font-size:11px;color:var(--zinc-500);">30 min · $35</p></div></div></div>
+            <div class="card"><div class="card-content" style="padding:14px;display:flex;align-items:center;gap:10px;"><div style="width:10px;height:36px;border-radius:4px;background:#8b5cf6;flex-shrink:0;"></div><div><p style="font-weight:500;font-size:13px;">Beard Trim</p><p style="font-size:11px;color:var(--zinc-500);">20 min · $20</p></div></div></div>
+            <div class="card"><div class="card-content" style="padding:14px;display:flex;align-items:center;gap:10px;"><div style="width:10px;height:36px;border-radius:4px;background:#22c55e;flex-shrink:0;"></div><div><p style="font-weight:500;font-size:13px;">Full Shave</p><p style="font-size:11px;color:var(--zinc-500);">45 min · $50</p></div></div></div>
+          </div>
+        </div>
+
+        <div>
+          <h2 style="font-weight:600;margin-bottom:14px;">Quick actions</h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">
+            <div class="card cursor-pointer" onclick="showDash('queue')" style="transition:.15s;" onmouseover="this.style.borderColor='#a1a1aa'" onmouseout="this.style.borderColor='#e4e4e7'"><div class="card-content" style="padding:14px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;">👥 Manage walk-in queue</div></div>
+            <div class="card cursor-pointer" onclick="showDash('pool')" style="transition:.15s;" onmouseover="this.style.borderColor='#a1a1aa'" onmouseout="this.style.borderColor='#e4e4e7'"><div class="card-content" style="padding:14px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;">⚡ Add open pool slots</div></div>
+            <div class="card cursor-pointer" onclick="showDash('availability')" style="transition:.15s;" onmouseover="this.style.borderColor='#a1a1aa'" onmouseout="this.style.borderColor='#e4e4e7'"><div class="card-content" style="padding:14px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;">🕐 Update availability</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOOKINGS -->
+      <div class="dash-view" id="dash-bookings">
+        <h1 style="font-size:22px;font-weight:700;margin-bottom:20px;">Bookings</h1>
+        <div class="tab-bar" style="margin-bottom:20px;">
+          <button class="tab-btn active" onclick="filterBookings(this,'upcoming')">Upcoming</button>
+          <button class="tab-btn" onclick="filterBookings(this,'completed')">Completed</button>
+          <button class="tab-btn" onclick="filterBookings(this,'cancelled')">Cancelled</button>
+          <button class="tab-btn" onclick="filterBookings(this,'all')">All</button>
+        </div>
+        <div class="space-y-2" id="bookings-list">
+          <div class="card" data-status="upcoming"><div class="card-content" style="padding:14px;display:flex;align-items:center;gap:12px;">
+            <div style="width:4px;height:44px;border-radius:4px;background:#3b82f6;flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><span style="font-weight:500;font-size:13px;">Jordan Davis</span><span class="badge badge-secondary">Upcoming</span></div>
+              <div style="display:flex;gap:14px;font-size:11px;color:var(--zinc-500);">
+                <span>📅 Mon, Mar 30</span><span>🕐 10:00 AM</span><span>Fade & Line Up</span>
+              </div>
+              <p style="font-size:11px;color:var(--zinc-400);margin-top:1px;">jordan.davis@email.com</p>
+            </div>
+            <button class="btn btn-ghost btn-sm" style="color:var(--red-500);">✕ Cancel</button>
+          </div></div>
+          <div class="card" data-status="upcoming"><div class="card-content" style="padding:14px;display:flex;align-items:center;gap:12px;">
+            <div style="width:4px;height:44px;border-radius:4px;background:#8b5cf6;flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><span style="font-weight:500;font-size:13px;">Keanu Williams</span><span class="badge badge-secondary">Upcoming</span></div>
+              <div style="display:flex;gap:14px;font-size:11px;color:var(--zinc-500);">
+                <span>📅 Mon, Mar 30</span><span>🕐 11:30 AM</span><span>Beard Trim</span>
+              </div>
+              <p style="font-size:11px;color:var(--zinc-400);margin-top:1px;">keanu.w@email.com</p>
+            </div>
+            <button class="btn btn-ghost btn-sm" style="color:var(--red-500);">✕ Cancel</button>
+          </div></div>
+          <div class="card" data-status="completed"><div class="card-content" style="padding:14px;display:flex;align-items:center;gap:12px;">
+            <div style="width:4px;height:44px;border-radius:4px;background:#22c55e;flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><span style="font-weight:500;font-size:13px;">Darius Thompson</span><span class="badge badge-success">Completed</span></div>
+              <div style="display:flex;gap:14px;font-size:11px;color:var(--zinc-500);">
+                <span>📅 Sat, Mar 28</span><span>🕐 2:00 PM</span><span>Full Shave</span>
+              </div>
+              <p style="font-size:11px;color:var(--zinc-400);margin-top:1px;">darius.t@email.com</p>
+            </div>
+          </div></div>
+          <div class="card" data-status="cancelled"><div class="card-content" style="padding:14px;display:flex;align-items:center;gap:12px;">
+            <div style="width:4px;height:44px;border-radius:4px;background:#ef4444;flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><span style="font-weight:500;font-size:13px;">Marcus Lee</span><span class="badge badge-destructive">Cancelled</span></div>
+              <div style="display:flex;gap:14px;font-size:11px;color:var(--zinc-500);">
+                <span>📅 Fri, Mar 27</span><span>🕐 9:00 AM</span><span>Fade & Line Up</span>
+              </div>
+              <p style="font-size:11px;color:var(--zinc-400);margin-top:1px;">marcuslee@email.com</p>
+            </div>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- WALK-IN QUEUE -->
+      <div class="dash-view" id="dash-queue">
+        <div class="flex items-start justify-between" style="margin-bottom:20px;">
+          <div>
+            <h1 style="font-size:22px;font-weight:700;">Walk-in Queue</h1>
+            <p style="color:var(--zinc-500);font-size:13px;margin-top:2px;">3 people waiting</p>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="copyText('chairtime.app/queue/marcus')">📋 Copy check-in link</button>
+        </div>
+        <div class="space-y-3">
+          <div class="queue-entry">
+            <div class="queue-num">1</div>
+            <div style="flex:1;">
+              <p style="font-weight:500;font-size:13px;">Tre Jackson</p>
+              <p style="font-size:11px;color:var(--zinc-500);">Fade · est. 15 min wait</p>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-primary btn-sm">📢 Call next</button>
+              <button class="btn btn-outline btn-sm">✓ Served</button>
+            </div>
+          </div>
+          <div class="queue-entry">
+            <div class="queue-num">2</div>
+            <div style="flex:1;">
+              <p style="font-weight:500;font-size:13px;">Devon Clarke</p>
+              <p style="font-size:11px;color:var(--zinc-500);">Beard trim · est. 45 min wait</p>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-ghost btn-sm" style="color:var(--red-500);">✕ Remove</button>
+            </div>
+          </div>
+          <div class="queue-entry">
+            <div class="queue-num">3</div>
+            <div style="flex:1;">
+              <p style="font-weight:500;font-size:13px;">Zion Morris</p>
+              <p style="font-size:11px;color:var(--zinc-500);">Haircut · est. 60 min wait</p>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-ghost btn-sm" style="color:var(--red-500);">✕ Remove</button>
+            </div>
+          </div>
+          <div style="text-align:center;padding:20px;">
+            <p style="font-size:12px;color:var(--zinc-400);">Updates in real time via Supabase Realtime</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPEN POOL -->
+      <div class="dash-view" id="dash-pool">
+        <div class="flex items-start justify-between" style="margin-bottom:20px;">
+          <div>
+            <h1 style="font-size:22px;font-weight:700;">Open Pool</h1>
+            <p style="color:var(--zinc-500);font-size:13px;margin-top:2px;">Post open slots clients can self-book</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="document.getElementById('pool-form').style.display='block'">+ Add slot</button>
+        </div>
+        <div class="card" id="pool-form" style="display:none;margin-bottom:16px;">
+          <div class="card-content">
+            <h3 style="font-weight:600;margin-bottom:14px;">New open slot</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div><label>Date</label><input class="input" type="date" /></div>
+              <div><label>Time</label><input class="input" type="time" value="10:00" /></div>
+            </div>
+            <div style="margin-bottom:12px;"><label>Service (optional)</label>
+              <select><option value="">Any service</option><option>Fade & Line Up</option><option>Beard Trim</option><option>Full Shave</option></select>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-outline" onclick="document.getElementById('pool-form').style.display='none'">Cancel</button>
+              <button class="btn btn-primary" onclick="document.getElementById('pool-form').style.display='none'">Add slot</button>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <div class="card"><div class="card-content" style="padding:14px;display:flex;align-items:center;justify-content:space-between;">
+            <div><p style="font-weight:500;font-size:13px;">Mon, Mar 30 — 9:00 AM</p><p style="font-size:11px;color:var(--zinc-500);">Any service</p></div>
+            <div style="display:flex;align-items:center;gap:10px;"><span class="badge badge-secondary">Open</span><button class="btn btn-ghost btn-sm" style="color:var(--red-500);">🗑</button></div>
+          </div></div>
+          <div class="card"><div class="card-content" style="padding:14px;display:flex;align-items:center;justify-content:space-between;">
+            <div><p style="font-weight:500;font-size:13px;">Mon, Mar 30 — 2:00 PM</p><p style="font-size:11px;color:var(--zinc-500);">Fade & Line Up</p></div>
+            <div style="display:flex;align-items:center;gap:10px;"><span class="badge badge-success">Booked</span><button class="btn btn-ghost btn-sm" style="color:var(--red-500);">🗑</button></div>
+          </div></div>
+          <div class="card"><div class="card-content" style="padding:14px;display:flex;align-items:center;justify-content:space-between;">
+            <div><p style="font-weight:500;font-size:13px;">Tue, Mar 31 — 11:00 AM</p><p style="font-size:11px;color:var(--zinc-500);">Any service</p></div>
+            <div style="display:flex;align-items:center;gap:10px;"><span class="badge badge-secondary">Open</span><button class="btn btn-ghost btn-sm" style="color:var(--red-500);">🗑</button></div>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- SERVICES -->
+      <div class="dash-view" id="dash-services">
+        <div class="flex items-start justify-between" style="margin-bottom:20px;">
+          <div>
+            <h1 style="font-size:22px;font-weight:700;">Services</h1>
+            <p style="color:var(--zinc-500);font-size:13px;margin-top:2px;">Manage what you offer clients</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="toggleServiceForm()">+ Add service</button>
+        </div>
+
+        <div class="card" id="service-form" style="display:none;margin-bottom:16px;">
+          <div class="card-content">
+            <h3 style="font-weight:600;margin-bottom:14px;">New service</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div><label>Name</label><input class="input" placeholder="e.g. Fade & Line Up" /></div>
+              <div><label>Duration (minutes)</label><input class="input" type="number" placeholder="30" /></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div><label>Price (optional)</label><input class="input" type="number" placeholder="0.00" /></div>
+              <div><label>Description</label><input class="input" placeholder="Short description..." /></div>
+            </div>
+            <div style="margin-bottom:12px;">
+              <label>Color</label>
+              <div style="display:flex;gap:8px;margin-top:4px;">
+                <div class="color-swatch active" style="background:#18181b;" onclick="selectColor(this)"></div>
+                <div class="color-swatch" style="background:#ef4444;" onclick="selectColor(this)"></div>
+                <div class="color-swatch" style="background:#f97316;" onclick="selectColor(this)"></div>
+                <div class="color-swatch" style="background:#eab308;" onclick="selectColor(this)"></div>
+                <div class="color-swatch" style="background:#22c55e;" onclick="selectColor(this)"></div>
+                <div class="color-swatch" style="background:#3b82f6;" onclick="selectColor(this)"></div>
+                <div class="color-swatch" style="background:#8b5cf6;" onclick="selectColor(this)"></div>
+                <div class="color-swatch" style="background:#ec4899;" onclick="selectColor(this)"></div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-outline" onclick="toggleServiceForm()">Cancel</button>
+              <button class="btn btn-primary" onclick="toggleServiceForm()">Create service</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="card"><div class="card-content" style="padding:14px;display:flex;align-items:center;gap:12px;">
+            <div style="width:10px;height:40px;border-radius:4px;background:#3b82f6;flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <p style="font-weight:500;font-size:13px;">Fade & Line Up</p>
+              <div style="display:flex;gap:14px;font-size:11px;color:var(--zinc-500);margin-top:2px;">
+                <span>🕐 30 min</span><span>💲 $35</span><span>42 bookings</span>
+              </div>
+            </div>
+            <label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+            <button class="btn btn-ghost btn-icon">✏️</button>
+            <button class="btn btn-ghost btn-icon" style="color:var(--red-500);">🗑</button>
+          </div></div>
+          <div class="card"><div class="card-content" style="padding:14px;display:flex;align-items:center;gap:12px;">
+            <div style="width:10px;height:40px;border-radius:4px;background:#8b5cf6;flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <p style="font-weight:500;font-size:13px;">Beard Trim</p>
+              <div style="display:flex;gap:14px;font-size:11px;color:var(--zinc-500);margin-top:2px;">
+                <span>🕐 20 min</span><span>💲 $20</span><span>28 bookings</span>
+              </div>
+            </div>
+            <label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+            <button class="btn btn-ghost btn-icon">✏️</button>
+            <button class="btn btn-ghost btn-icon" style="color:var(--red-500);">🗑</button>
+          </div></div>
+          <div class="card"><div class="card-content" style="padding:14px;display:flex;align-items:center;gap:12px;">
+            <div style="width:10px;height:40px;border-radius:4px;background:#22c55e;flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <p style="font-weight:500;font-size:13px;">Full Shave</p><span class="badge badge-outline">Inactive</span>
+              </div>
+              <div style="display:flex;gap:14px;font-size:11px;color:var(--zinc-500);margin-top:2px;">
+                <span>🕐 45 min</span><span>💲 $50</span><span>11 bookings</span>
+              </div>
+            </div>
+            <label class="toggle"><input type="checkbox" /><span class="toggle-slider"></span></label>
+            <button class="btn btn-ghost btn-icon">✏️</button>
+            <button class="btn btn-ghost btn-icon" style="color:var(--red-500);">🗑</button>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- AVAILABILITY -->
+      <div class="dash-view" id="dash-availability">
+        <h1 style="font-size:22px;font-weight:700;margin-bottom:20px;">Availability</h1>
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-content">
+            <h3 style="font-weight:600;margin-bottom:14px;">Weekly hours</h3>
+            <div class="space-y-2">
+              <div class="day-row"><span class="day-name" style="font-size:13px;">Monday</span><label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label><div class="time-range"><input class="input" style="width:90px;" value="9:00 AM" /><span style="color:var(--zinc-400);">–</span><input class="input" style="width:90px;" value="6:00 PM" /></div></div>
+              <div class="day-row"><span class="day-name" style="font-size:13px;">Tuesday</span><label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label><div class="time-range"><input class="input" style="width:90px;" value="9:00 AM" /><span style="color:var(--zinc-400);">–</span><input class="input" style="width:90px;" value="6:00 PM" /></div></div>
+              <div class="day-row"><span class="day-name" style="font-size:13px;">Wednesday</span><label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label><div class="time-range"><input class="input" style="width:90px;" value="9:00 AM" /><span style="color:var(--zinc-400);">–</span><input class="input" style="width:90px;" value="6:00 PM" /></div></div>
+              <div class="day-row"><span class="day-name" style="font-size:13px;">Thursday</span><label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label><div class="time-range"><input class="input" style="width:90px;" value="9:00 AM" /><span style="color:var(--zinc-400);">–</span><input class="input" style="width:90px;" value="6:00 PM" /></div></div>
+              <div class="day-row"><span class="day-name" style="font-size:13px;">Friday</span><label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label><div class="time-range"><input class="input" style="width:90px;" value="9:00 AM" /><span style="color:var(--zinc-400);">–</span><input class="input" style="width:90px;" value="7:00 PM" /></div></div>
+              <div class="day-row"><span class="day-name" style="font-size:13px;">Saturday</span><label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label><div class="time-range"><input class="input" style="width:90px;" value="10:00 AM" /><span style="color:var(--zinc-400);">–</span><input class="input" style="width:90px;" value="5:00 PM" /></div></div>
+              <div class="day-row"><span class="day-name" style="font-size:13px;">Sunday</span><label class="toggle"><input type="checkbox" /><span class="toggle-slider"></span></label><div class="time-range" style="opacity:.4;"><input class="input" style="width:90px;" disabled value="Closed" /></div></div>
+            </div>
+            <button class="btn btn-primary btn-sm" style="margin-top:16px;">Save changes</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-content">
+            <div class="flex items-center justify-between" style="margin-bottom:14px;">
+              <h3 style="font-weight:600;">Date overrides</h3>
+              <button class="btn btn-outline btn-sm">+ Add override</button>
+            </div>
+            <div class="card" style="border-style:dashed;"><div class="card-content" style="text-align:center;padding:24px;color:var(--zinc-400);font-size:13px;">No overrides yet — add holidays or blocked days here</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLIENTS -->
+      <div class="dash-view" id="dash-clients">
+        <div class="flex items-start justify-between" style="margin-bottom:20px;">
+          <div>
+            <h1 style="font-size:22px;font-weight:700;">Clients</h1>
+            <p style="color:var(--zinc-500);font-size:13px;margin-top:2px;">87 total clients</p>
+          </div>
+          <input class="input" style="max-width:220px;" placeholder="🔍 Search clients..." />
+        </div>
+        <div class="space-y-2">
+          <div class="client-row"><div class="avatar" style="background:#3b82f6;">JD</div><div style="flex:1;"><p style="font-weight:500;font-size:13px;">Jordan Davis</p><p style="font-size:11px;color:var(--zinc-500);">jordan.davis@email.com</p></div><div style="text-align:right;"><p style="font-size:12px;font-weight:500;">8 visits</p><p style="font-size:11px;color:var(--zinc-500);">Last: Mar 28</p></div></div>
+          <div class="client-row"><div class="avatar" style="background:#8b5cf6;">KW</div><div style="flex:1;"><p style="font-weight:500;font-size:13px;">Keanu Williams</p><p style="font-size:11px;color:var(--zinc-500);">keanu.w@email.com</p></div><div style="text-align:right;"><p style="font-size:12px;font-weight:500;">5 visits</p><p style="font-size:11px;color:var(--zinc-500);">Last: Mar 22</p></div></div>
+          <div class="client-row"><div class="avatar" style="background:#22c55e;">DT</div><div style="flex:1;"><p style="font-weight:500;font-size:13px;">Darius Thompson</p><p style="font-size:11px;color:var(--zinc-500);">darius.t@email.com</p></div><div style="text-align:right;"><p style="font-size:12px;font-weight:500;">12 visits</p><p style="font-size:11px;color:var(--zinc-500);">Last: Mar 28</p></div></div>
+          <div class="client-row"><div class="avatar" style="background:#f97316;">TJ</div><div style="flex:1;"><p style="font-weight:500;font-size:13px;">Tre Jackson</p><p style="font-size:11px;color:var(--zinc-500);">tre.jackson@email.com</p></div><div style="text-align:right;"><p style="font-size:12px;font-weight:500;">3 visits</p><p style="font-size:11px;color:var(--zinc-500);">Last: Mar 20</p></div></div>
+          <div class="client-row"><div class="avatar" style="background:#ec4899;">ZM</div><div style="flex:1;"><p style="font-weight:500;font-size:13px;">Zion Morris</p><p style="font-size:11px;color:var(--zinc-500);">zion.m@email.com</p></div><div style="text-align:right;"><p style="font-size:12px;font-weight:500;">2 visits</p><p style="font-size:11px;color:var(--zinc-500);">Last: Mar 15</p></div></div>
+        </div>
+      </div>
+
+      <!-- SHOP -->
+      <div class="dash-view" id="dash-shop">
+        <h1 style="font-size:22px;font-weight:700;margin-bottom:20px;">Shop</h1>
+        <div class="card" style="border:2px solid var(--zinc-900);margin-bottom:16px;">
+          <div class="card-content" style="padding:20px;text-align:center;">
+            <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="color:var(--zinc-300);margin:0 auto 12px;display:block;"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            <h3 style="font-weight:600;margin-bottom:6px;">Team management requires Shop plan</h3>
+            <p style="font-size:13px;color:var(--zinc-500);margin-bottom:16px;">Upgrade to invite barbers and manage your team</p>
+            <button class="btn btn-primary" onclick="showDash('settings');setTimeout(()=>switchSettingsTab('billing'),100)">Upgrade to Shop — $49/mo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="dash-view" id="dash-settings">
+        <h1 style="font-size:22px;font-weight:700;margin-bottom:20px;">Settings</h1>
+        <div class="tab-bar" style="margin-bottom:20px;" id="settings-tabs">
+          <button class="tab-btn active" onclick="switchSettingsTab('profile')">Profile</button>
+          <button class="tab-btn" onclick="switchSettingsTab('billing')">Billing</button>
+        </div>
+        <div id="settings-profile">
+          <div class="card">
+            <div class="card-content">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+                <div><label>Full name</label><input class="input" value="Marcus Johnson" /></div>
+                <div><label>Username</label><div style="display:flex;"><span style="height:36px;padding:0 12px;display:flex;align-items:center;font-size:13px;color:var(--zinc-500);border:1px solid var(--zinc-200);border-right:none;border-radius:6px 0 0 6px;background:var(--zinc-50);">chairtime.app/</span><input class="input" style="border-radius:0 6px 6px 0;" value="marcus" disabled /></div></div>
+              </div>
+              <div style="margin-bottom:14px;"><label>Bio</label><input class="input" value="Premium fades & classic cuts. Serving NYC since 2018." /></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+                <div><label>Phone</label><input class="input" value="(212) 555-0192" /></div>
+                <div><label>Timezone</label><select><option selected>America/New_York</option></select></div>
+              </div>
+              <button class="btn btn-primary btn-sm">Save profile</button>
+            </div>
+          </div>
+        </div>
+        <div id="settings-billing" style="display:none;">
+          <div class="card" style="margin-bottom:14px;">
+            <div class="card-content" style="display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <p style="font-size:12px;color:var(--zinc-500);">Current plan</p>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+                  <p style="font-size:20px;font-weight:700;">Solo</p><span class="badge badge-secondary">$19/mo</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+            <div class="card" style="border-color:var(--zinc-900);"><div class="card-content" style="padding:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><p style="font-weight:600;">Solo</p><span>✓</span></div>
+              <p style="font-size:22px;font-weight:700;">$19<span style="font-size:13px;font-weight:400;color:var(--zinc-500);">/mo</span></p>
+              <p style="font-size:11px;color:var(--zinc-500);margin-top:4px;margin-bottom:12px;">1 barber</p>
+              <p style="font-size:11px;color:var(--zinc-400);text-align:center;">Current plan</p>
+            </div></div>
+            <div class="card"><div class="card-content" style="padding:16px;">
+              <p style="font-weight:600;margin-bottom:6px;">Shop</p>
+              <p style="font-size:22px;font-weight:700;">$49<span style="font-size:13px;font-weight:400;color:var(--zinc-500);">/mo</span></p>
+              <p style="font-size:11px;color:var(--zinc-500);margin-top:4px;margin-bottom:12px;">Up to 10 barbers</p>
+              <button class="btn btn-outline btn-sm btn-w-full">Upgrade</button>
+            </div></div>
+            <div class="card"><div class="card-content" style="padding:16px;">
+              <p style="font-weight:600;margin-bottom:6px;">Pro Shop</p>
+              <p style="font-size:22px;font-weight:700;">$99<span style="font-size:13px;font-weight:400;color:var(--zinc-500);">/mo</span></p>
+              <p style="font-size:11px;color:var(--zinc-500);margin-top:4px;margin-bottom:12px;">Unlimited barbers</p>
+              <button class="btn btn-outline btn-sm btn-w-full">Upgrade</button>
+            </div></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PUBLIC BOOKING PAGE
+══════════════════════════════════════════ -->
+<div id="page-public-booking" class="page" style="background:var(--zinc-50);min-height:100vh;">
+  <div class="public-wrap">
+    <!-- Barber profile -->
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:28px;">
+      <div class="avatar" style="width:56px;height:56px;font-size:18px;background:#18181b;">MJ</div>
+      <div>
+        <h1 style="font-size:20px;font-weight:700;">Marcus Johnson</h1>
+        <p style="color:var(--zinc-500);font-size:13px;">Premium fades & classic cuts. Serving NYC since 2018.</p>
+      </div>
+    </div>
+
+    <!-- Booking steps -->
+    <div class="step-indicator">
+      <div class="step-pip done" id="pip1"></div>
+      <div class="step-pip" id="pip2"></div>
+      <div class="step-pip" id="pip3"></div>
+      <div class="step-pip" id="pip4"></div>
+    </div>
+
+    <!-- Step 1: Choose service -->
+    <div id="book-step1">
+      <h2 style="font-size:16px;font-weight:600;margin-bottom:14px;">Choose a service</h2>
+      <div class="space-y-2">
+        <div class="service-choice selected" onclick="selectService(this,'Fade & Line Up','30 min','$35')">
+          <div style="width:12px;height:12px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></div>
+          <div style="flex:1;"><p style="font-weight:500;font-size:13px;">Fade & Line Up</p><p style="font-size:11px;color:var(--zinc-500);">30 min</p></div>
+          <span style="font-weight:600;font-size:13px;">$35</span>
+        </div>
+        <div class="service-choice" onclick="selectService(this,'Beard Trim','20 min','$20')">
+          <div style="width:12px;height:12px;border-radius:50%;background:#8b5cf6;flex-shrink:0;"></div>
+          <div style="flex:1;"><p style="font-weight:500;font-size:13px;">Beard Trim</p><p style="font-size:11px;color:var(--zinc-500);">20 min</p></div>
+          <span style="font-weight:600;font-size:13px;">$20</span>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-w-full" style="margin-top:20px;" onclick="bookStep(2)">Continue →</button>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="showPage('landing')">← Back to home</button>
+    </div>
+
+    <!-- Step 2: Pick date -->
+    <div id="book-step2" style="display:none;">
+      <h2 style="font-size:16px;font-weight:600;margin-bottom:14px;">Pick a date — March 2026</h2>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px;">
+        <div style="text-align:center;font-size:11px;font-weight:600;color:var(--zinc-500);padding:4px;">Su</div>
+        <div style="text-align:center;font-size:11px;font-weight:600;color:var(--zinc-500);padding:4px;">Mo</div>
+        <div style="text-align:center;font-size:11px;font-weight:600;color:var(--zinc-500);padding:4px;">Tu</div>
+        <div style="text-align:center;font-size:11px;font-weight:600;color:var(--zinc-500);padding:4px;">We</div>
+        <div style="text-align:center;font-size:11px;font-weight:600;color:var(--zinc-500);padding:4px;">Th</div>
+        <div style="text-align:center;font-size:11px;font-weight:600;color:var(--zinc-500);padding:4px;">Fr</div>
+        <div style="text-align:center;font-size:11px;font-weight:600;color:var(--zinc-500);padding:4px;">Sa</div>
+      </div>
+      <div id="cal-grid" class="day-grid" style="margin-bottom:20px;"></div>
+      <button class="btn btn-primary btn-w-full" onclick="bookStep(3)">Continue →</button>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="bookStep(1)">← Back</button>
+    </div>
+
+    <!-- Step 3: Pick time -->
+    <div id="book-step3" style="display:none;">
+      <h2 style="font-size:16px;font-weight:600;margin-bottom:14px;">Pick a time</h2>
+      <div class="time-grid" id="time-grid"></div>
+      <button class="btn btn-primary btn-w-full" style="margin-top:20px;" onclick="bookStep(4)">Continue →</button>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="bookStep(2)">← Back</button>
+    </div>
+
+    <!-- Step 4: Your info -->
+    <div id="book-step4" style="display:none;">
+      <h2 style="font-size:16px;font-weight:600;margin-bottom:4px;">Your details</h2>
+      <p style="font-size:13px;color:var(--zinc-500);margin-bottom:16px;">We'll send a confirmation to your email.</p>
+      <div class="space-y-4" style="margin-bottom:20px;">
+        <div><label>Full name</label><input class="input" placeholder="Alex Johnson" /></div>
+        <div><label>Email</label><input class="input" type="email" placeholder="you@example.com" /></div>
+        <div><label>Phone (optional)</label><input class="input" type="tel" placeholder="(555) 000-0000" /></div>
+        <div><label>Note for barber (optional)</label><input class="input" placeholder="Any special requests..." /></div>
+      </div>
+      <div class="card" style="margin-bottom:16px;"><div class="card-content" style="padding:14px;">
+        <p style="font-size:12px;color:var(--zinc-500);margin-bottom:4px;">Booking summary</p>
+        <p style="font-weight:600;font-size:14px;" id="summary-service">Fade & Line Up</p>
+        <p style="font-size:12px;color:var(--zinc-500);" id="summary-dt">Mon, Mar 30 at 10:00 AM · 30 min · $35</p>
+      </div></div>
+      <button class="btn btn-primary btn-w-full" onclick="bookConfirm()">Confirm booking</button>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="bookStep(3)">← Back</button>
+    </div>
+
+    <!-- Confirmed -->
+    <div id="book-confirmed" style="display:none;text-align:center;padding:24px 0;">
+      <div style="width:64px;height:64px;background:var(--green-100);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h2 style="font-size:20px;font-weight:700;margin-bottom:6px;">You're booked!</h2>
+      <p style="color:var(--zinc-500);font-size:13px;margin-bottom:24px;">A confirmation has been sent to your email.</p>
+      <div class="card" style="margin-bottom:20px;"><div class="card-content" style="padding:16px;">
+        <p style="font-weight:600;margin-bottom:4px;">Fade & Line Up with Marcus</p>
+        <p style="font-size:13px;color:var(--zinc-500);">Mon, Mar 30 at 10:00 AM</p>
+      </div></div>
+      <button class="btn btn-outline btn-w-full" onclick="bookStep(1)">Book another</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PUBLIC QUEUE CHECK-IN
+══════════════════════════════════════════ -->
+<div id="page-queue-checkin" class="page" style="background:var(--zinc-50);">
+  <div class="auth-wrap">
+    <div style="width:100%;max-width:360px;">
+      <div style="text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:28px;">
+        <div class="logo-icon" style="width:36px;height:36px;"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm2.12-8.485a3 3 0 10-4.242-4.242 3 3 0 004.242 4.242z"/></svg></div>
+        <span style="font-weight:700;font-size:18px;">ChairTime</span>
+      </div>
+      <div id="queue-join-form" class="auth-card">
+        <div style="text-align:center;margin-bottom:20px;">
+          <div style="width:56px;height:56px;background:var(--zinc-100);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+            <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <h2 style="font-size:18px;font-weight:700;">Join the Queue</h2>
+          <p style="font-size:13px;color:var(--zinc-500);margin-top:2px;">Marcus Johnson · 3 people waiting</p>
+        </div>
+        <div class="space-y-4">
+          <div><label>Your name</label><input class="input" placeholder="Alex Johnson" /></div>
+          <div><label>Email</label><input class="input" type="email" placeholder="you@example.com" /></div>
+          <div><label>Phone (optional)</label><input class="input" type="tel" placeholder="(555) 000-0000" /></div>
+          <div><label>What do you need? (optional)</label><input class="input" placeholder="e.g. Fade, beard trim..." /></div>
+          <button class="btn btn-primary btn-w-full" onclick="joinQueue()">Join queue</button>
+        </div>
+      </div>
+      <div id="queue-waiting" style="display:none;">
+        <div class="auth-card" style="text-align:center;">
+          <div style="width:64px;height:64px;background:var(--zinc-900);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+            <span style="font-size:26px;font-weight:700;color:#fff;">4</span>
+          </div>
+          <h2 style="font-size:18px;font-weight:700;margin-bottom:4px;">You're in the queue</h2>
+          <p style="color:var(--zinc-500);font-size:13px;margin-bottom:20px;">Hi Alex!</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+            <div style="background:var(--zinc-50);border-radius:8px;padding:14px;"><p style="font-size:24px;font-weight:700;">4</p><p style="font-size:11px;color:var(--zinc-500);margin-top:2px;">Position</p></div>
+            <div style="background:var(--zinc-50);border-radius:8px;padding:14px;"><p style="font-size:24px;font-weight:700;">~75m</p><p style="font-size:11px;color:var(--zinc-500);margin-top:2px;">Est. wait</p></div>
+          </div>
+          <p style="font-size:11px;color:var(--zinc-400);">Keep this page open — your position updates in real time.</p>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:12px;"><button class="btn btn-ghost btn-sm" onclick="showPage('landing')">← Back to home</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Navigation bar (demo pages only) ── -->
+<div style="position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-top:1px solid var(--zinc-200);padding:8px 12px;display:flex;align-items:center;gap:6px;overflow-x:auto;z-index:200;font-size:11px;">
+  <span style="color:var(--zinc-400);white-space:nowrap;font-weight:600;margin-right:4px;">Preview:</span>
+  <button class="btn btn-ghost btn-sm" style="white-space:nowrap;" onclick="showPage('landing')">🏠 Landing</button>
+  <button class="btn btn-ghost btn-sm" style="white-space:nowrap;" onclick="showPage('login')">🔐 Login</button>
+  <button class="btn btn-ghost btn-sm" style="white-space:nowrap;" onclick="showPage('signup')">📝 Signup</button>
+  <button class="btn btn-ghost btn-sm" style="white-space:nowrap;" onclick="showPage('onboarding')">🚀 Onboarding</button>
+  <button class="btn btn-ghost btn-sm" style="white-space:nowrap;" onclick="showPage('dashboard')">📊 Dashboard</button>
+  <button class="btn btn-ghost btn-sm" style="white-space:nowrap;" onclick="showPage('public-booking')">📅 Book Page</button>
+  <button class="btn btn-ghost btn-sm" style="white-space:nowrap;" onclick="showPage('queue-checkin')">🪑 Queue</button>
+</div>
+
+<script>
+// ── Page navigation ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 'public-booking') buildCalendar();
+}
+
+// ── Dashboard navigation ──
+function showDash(view) {
+  document.querySelectorAll('.dash-view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('dash-' + view).classList.add('active');
+  const navEl = document.getElementById('nav-' + view);
+  if (navEl) navEl.classList.add('active');
+}
+
+// ── Onboarding ──
+function onboardStep2() {
+  document.getElementById('onboard-step1').style.display = 'none';
+  document.getElementById('onboard-step2').style.display = 'block';
+  document.getElementById('step-2').classList.remove('inactive');
+  document.getElementById('step-line-1').classList.add('done');
+}
+function onboardStep1() {
+  document.getElementById('onboard-step2').style.display = 'none';
+  document.getElementById('onboard-step1').style.display = 'block';
+  document.getElementById('step-2').classList.add('inactive');
+}
+function selectType(t) {
+  document.getElementById('type-solo').classList.toggle('active', t === 'solo');
+  document.getElementById('type-shop').classList.toggle('active', t === 'shop');
+}
+
+// ── Bookings filter ──
+function filterBookings(btn, status) {
+  document.querySelectorAll('#settings-tabs .tab-btn, .tab-bar .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#bookings-list .card').forEach(card => {
+    const s = card.dataset.status;
+    card.style.display = (status === 'all' || s === status) ? 'block' : 'none';
+  });
+}
+
+// ── Settings tabs ──
+function switchSettingsTab(tab) {
+  document.querySelectorAll('#settings-tabs .tab-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim().toLowerCase() === tab);
+  });
+  document.getElementById('settings-profile').style.display = tab === 'profile' ? 'block' : 'none';
+  document.getElementById('settings-billing').style.display = tab === 'billing' ? 'block' : 'none';
+}
+
+// ── Service form ──
+function toggleServiceForm() {
+  const f = document.getElementById('service-form');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+function selectColor(el) {
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── Public booking ──
+let selectedDay = 30, selectedTime = '10:00 AM', selectedServiceName = 'Fade & Line Up';
+function selectService(el, name, dur, price) {
+  document.querySelectorAll('.service-choice').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedServiceName = name;
+  document.getElementById('summary-service').textContent = name;
+  document.getElementById('summary-dt').textContent = `Mon, Mar ${selectedDay} at ${selectedTime} · ${dur} · ${price}`;
+}
+function buildCalendar() {
+  const grid = document.getElementById('cal-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  // March 2026 starts on Sunday
+  const offset = 0;
+  for (let i = 0; i < offset; i++) { const d = document.createElement('div'); grid.appendChild(d); }
+  for (let d = 1; d <= 31; d++) {
+    const btn = document.createElement('div');
+    btn.className = 'day-btn' + (d < 26 ? ' disabled' : '') + (d === 30 ? ' selected' : '');
+    btn.textContent = d;
+    if (d >= 26) btn.onclick = () => { document.querySelectorAll('#cal-grid .day-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); selectedDay = d; };
+    grid.appendChild(btn);
+  }
+}
+function buildTimes() {
+  const grid = document.getElementById('time-grid');
+  grid.innerHTML = '';
+  const times = ['9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','4:00 PM','4:30 PM','5:00 PM'];
+  times.forEach((t, i) => {
+    const btn = document.createElement('div');
+    btn.className = 'time-btn' + (i === 2 ? ' selected' : '');
+    btn.textContent = t;
+    btn.onclick = () => { document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); selectedTime = t; document.getElementById('summary-dt').textContent = `Mon, Mar ${selectedDay} at ${t} · 30 min · $35`; };
+    grid.appendChild(btn);
+  });
+}
+function bookStep(step) {
+  document.querySelectorAll('[id^="book-step"], #book-confirmed').forEach(el => el.style.display = 'none');
+  if (step === 'confirm') { document.getElementById('book-confirmed').style.display = 'block'; return; }
+  document.getElementById('book-step' + step).style.display = 'block';
+  document.querySelectorAll('.step-pip').forEach((pip, i) => pip.classList.toggle('done', i < step));
+  if (step === 3) buildTimes();
+}
+function bookConfirm() { bookStep('confirm'); }
+function joinQueue() {
+  document.getElementById('queue-join-form').style.display = 'none';
+  document.getElementById('queue-waiting').style.display = 'block';
+}
+function copyText(t) { alert('Copied: ' + t); }
+
+// Init
+buildCalendar();
+</script>
+</body>
+</html>

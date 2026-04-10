@@ -1,0 +1,278 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Plan {
+  SOLO
+  SHOP
+  PRO_SHOP
+}
+
+enum BookingMode {
+  APPOINTMENT
+  WAITLIST
+  POOL
+}
+
+enum AppointmentStatus {
+  UPCOMING
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum WaitlistStatus {
+  WAITING
+  CALLED
+  SERVED
+  LEFT
+}
+
+enum PoolSlotStatus {
+  OPEN
+  BOOKED
+  CANCELLED
+}
+
+enum DayOfWeek {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+// ─── User / Barber ────────────────────────────────────────────────────────────
+
+model User {
+  id                   String    @id @default(cuid())
+  authId               String    @unique
+  email                String    @unique
+  name                 String
+  username             String    @unique
+  photoUrl             String?
+  bio                  String?
+  timezone             String    @default("America/New_York")
+  phone                String?
+  plan                 Plan      @default(SOLO)
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  subscriptionEndsAt   DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  services              Service[]
+  availabilitySchedules AvailabilitySchedule[]
+  appointments          Appointment[]          @relation("BarberAppointments")
+  waitlistEntries       WaitlistEntry[]        @relation("BarberWaitlist")
+  poolSlots             PoolSlot[]
+  contacts              Contact[]
+  shopMemberships       ShopMember[]
+  ownedShop             Shop?                  @relation("ShopOwner")
+
+  @@index([username])
+  @@index([authId])
+}
+
+// ─── Shop ─────────────────────────────────────────────────────────────────────
+
+model Shop {
+  id        String   @id @default(cuid())
+  ownerId   String   @unique
+  name      String
+  slug      String   @unique
+  logoUrl   String?
+  bio       String?
+  address   String?
+  phone     String?
+  timezone  String   @default("America/New_York")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner           User            @relation("ShopOwner", fields: [ownerId], references: [id])
+  members         ShopMember[]
+  waitlistEntries WaitlistEntry[] @relation("ShopWaitlist")
+
+  @@index([slug])
+}
+
+model ShopMember {
+  id       String   @id @default(cuid())
+  shopId   String
+  userId   String
+  isActive Boolean  @default(true)
+  joinedAt DateTime @default(now())
+
+  shop Shop @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([shopId, userId])
+}
+
+// ─── Services ─────────────────────────────────────────────────────────────────
+
+model Service {
+  id              String   @id @default(cuid())
+  userId          String
+  name            String
+  slug            String
+  description     String?
+  durationMinutes Int
+  price           Float?
+  color           String   @default("#6366f1")
+  isActive        Boolean  @default(true)
+  bufferBefore    Int      @default(0)
+  bufferAfter     Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+  poolSlots    PoolSlot[]
+
+  @@unique([userId, slug])
+  @@index([userId])
+}
+
+// ─── Availability ─────────────────────────────────────────────────────────────
+
+model AvailabilitySchedule {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String   @default("Default Schedule")
+  isDefault Boolean  @default(false)
+  timezone  String   @default("America/New_York")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weeklyHours   WeeklyHours[]
+  dateOverrides DateOverride[]
+
+  @@index([userId])
+}
+
+model WeeklyHours {
+  id          String    @id @default(cuid())
+  scheduleId  String
+  day         DayOfWeek
+  isAvailable Boolean   @default(false)
+  startTime   String?
+  endTime     String?
+
+  schedule AvailabilitySchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  @@unique([scheduleId, day])
+}
+
+model DateOverride {
+  id          String  @id @default(cuid())
+  scheduleId  String
+  date        String
+  isAvailable Boolean @default(false)
+  startTime   String?
+  endTime     String?
+
+  schedule AvailabilitySchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  @@unique([scheduleId, date])
+}
+
+// ─── Appointments ─────────────────────────────────────────────────────────────
+
+model Appointment {
+  id                 String            @id @default(cuid())
+  barberId           String
+  serviceId          String
+  contactId          String?
+  status             AppointmentStatus @default(UPCOMING)
+  startTime          DateTime
+  endTime            DateTime
+  clientTimezone     String
+  attendeeName       String
+  attendeeEmail      String
+  attendeePhone      String?
+  notes              String?
+  cancellationReason String?
+  rescheduledFromId  String?
+  bookingMode        BookingMode       @default(APPOINTMENT)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  barber  User     @relation("BarberAppointments", fields: [barberId], references: [id])
+  service Service  @relation(fields: [serviceId], references: [id])
+  contact Contact? @relation(fields: [contactId], references: [id])
+
+  @@index([barberId])
+  @@index([startTime])
+}
+
+// ─── Waitlist ─────────────────────────────────────────────────────────────────
+
+model WaitlistEntry {
+  id            String         @id @default(cuid())
+  shopId        String?
+  barberId      String?
+  attendeeName  String
+  attendeeEmail String
+  attendeePhone String?
+  serviceNote   String?
+  status        WaitlistStatus @default(WAITING)
+  position      Int
+  estimatedWait Int?
+  checkedInAt   DateTime       @default(now())
+  calledAt      DateTime?
+  servedAt      DateTime?
+
+  shop   Shop? @relation("ShopWaitlist", fields: [shopId], references: [id])
+  barber User? @relation("BarberWaitlist", fields: [barberId], references: [id])
+
+  @@index([shopId, status])
+  @@index([barberId, status])
+}
+
+// ─── Open Pool Slots ──────────────────────────────────────────────────────────
+
+model PoolSlot {
+  id            String         @id @default(cuid())
+  barberId      String
+  serviceId     String?
+  startTime     DateTime
+  endTime       DateTime
+  status        PoolSlotStatus @default(OPEN)
+  appointmentId String?
+  createdAt     DateTime       @default(now())
+
+  barber  User     @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  service Service? @relation(fields: [serviceId], references: [id])
+
+  @@index([barberId, startTime])
+  @@index([status, startTime])
+}
+
+// ─── Contacts ─────────────────────────────────────────────────────────────────
+
+model Contact {
+  id            String    @id @default(cuid())
+  barberId      String
+  name          String
+  email         String
+  phone         String?
+  totalBookings Int       @default(0)
+  lastBookedAt  DateTime?
+  createdAt     DateTime  @default(now())
+
+  barber       User          @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+
+  @@unique([barberId, email])
+  @@index([barberId])
+}
