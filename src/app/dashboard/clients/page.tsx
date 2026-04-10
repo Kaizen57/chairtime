@@ -7,6 +7,7 @@ import { Users, Mail, Phone, Calendar } from "lucide-react";
 import { getInitials } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import type { Metadata } from "next";
+import type { Contact } from "@/types";
 
 export const metadata: Metadata = { title: "Clients" };
 
@@ -42,7 +43,7 @@ export default async function ClientsPage() {
         </Card>
       ) : (
         <div className="space-y-2">
-          {contacts.map((contact) => (
+          {(contacts as Contact[]).map((contact) => (
             <Card key={contact.id}>
               <CardContent className="p-4 flex items-center gap-4">
                 <Avatar className="w-10 h-10 shrink-0">
