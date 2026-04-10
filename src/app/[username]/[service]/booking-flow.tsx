@@ -65,8 +65,8 @@ function getAvailableSlots(date: Date, service: ServiceInfo, schedule: ScheduleW
   if (!schedule) return [];
 
   const dayName = DAY_MAP[date.getDay()];
-  const override = schedule.dateOverrides.find((o) => o.date === format(date, "yyyy-MM-dd"));
-  const weekDay = schedule.weeklyHours.find((h) => h.day === dayName);
+  const override = schedule.dateOverrides.find((o: DateOverride) => o.date === format(date, "yyyy-MM-dd"));
+  const weekDay = schedule.weeklyHours.find((h: WeeklyHours) => h.day === dayName);
 
   const isAvail = override ? override.isAvailable : (weekDay?.isAvailable ?? false);
   if (!isAvail) return [];
